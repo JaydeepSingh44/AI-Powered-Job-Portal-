@@ -4,10 +4,13 @@ const jonSeekerSchema = new mongoose({
     name:{
         type:String,
         require:true,
+        trim: true
     },
     email:{
         type:String,
         require:true,
+        unique: true,
+        trim: true
     },
 
 
@@ -59,7 +62,7 @@ const jonSeekerSchema = new mongoose({
 
     subscriptionId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"subscription",
+        ref:"jobSeekerSubscription",
     },
     role: {
     type: String,

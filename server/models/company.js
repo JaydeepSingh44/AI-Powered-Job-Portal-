@@ -8,6 +8,7 @@ const companySchema = new mongoose.Schema({
     email:{
         type:String,
         require:true,
+        unique: true
     },
     password:{
         type:String,
@@ -38,13 +39,13 @@ const companySchema = new mongoose.Schema({
 
     jobsPosted: [
         { type: mongoose.Schema.Types.ObjectId, 
-            ref: "Job" 
+            ref: "job" 
         }
     ],
 
   subscriptionId: {
     type: mongoose.Schema.Types.ObjectId, 
-    ref: "Subscription" ,
+    ref: "userSubscription" ,
 },
 
   role: { 
