@@ -1,95 +1,96 @@
-const jwt = require("jsonwebtoken0");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-exports.auth = (req,res,next) => {
-    try{
-        const token = req.body.token || req.cookies.token;
+exports.auth = (req, res, next) => {
+  let token;
 
-        if(!token){
-            return res.status(401).json({
-                success:false,
-                message:"Token missing",
-            });
-        }
+  // Get token from header
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+    console.log("Token from header:", token);
+  }
 
-        try{
-            const decode = jwt.verify(token,process.env.JWT_SECRET);
-            console.log("decoded token", decode);
+  // Get token from cookies (optional)
+  else if (req.cookies && req.cookies.jwt) {
+    token = req.cookies.jwt;
+    console.log("Token from cookies:", token);
+  }
 
-            res.user=decode;
+  // No token found
+  else {
+    return res.status(401).json({
+      success: false,
+      message: "Not authorized, no token",
+    });
+  }
 
-        }catch(error){
-            return res.status(401).json({
-                success:false,
-                message:"token is invalid",
-            });
-        }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded token:", decoded);
 
-        next();
-        
+    // IMPORTANT FIX
+    req.user = decoded;   // <- Correct place to store user
 
-    }catch(error){
-        console.log(error);
-        return res.status(401).json({
-                success:false,
-                message:"something went wrong while verifying token",
-            });
-
-    }
+    next();   // <- Move next() here (inside try)
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Token is invalid",
+    });
+  }
 };
 
-
-exports.isjobSeeker = (req,res,next) =>{
-    try{
-        if(req.user.role !== "jobseeker"){
-            return res.status(401).json({
-                success:false,
-                message:"protected route for job seekers only",
-            });
-        }
-        next();
-
-    }catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"user role is not matching",
-        });
+// ROLE Middlewares
+exports.isjobSeeker = (req, res, next) => {
+  try {
+    if (req.user.role !== "jobseeker") {
+      return res.status(401).json({
+        success: false,
+        message: "Protected route for job seekers only",
+      });
     }
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "User role is not matching",
+    });
+  }
 };
 
-exports.isCompany = (req,res,next) =>{
-    try{
-        if(req.user.role !=="company") {
-        return res.status(401).json({
-            success:false,
-            message:"protected route for companies only",
-        })
-        }
-
-    }catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"user role is not matching",
-        });
+exports.isCompany = (req, res, next) => {
+  try {
+    if (req.user.role !== "company") {
+      return res.status(401).json({
+        success: false,
+        message: "Protected route for companies only",
+      });
     }
-
+    next();   // FIX
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "User role is not matching",
+    });
+  }
 };
 
-exports.isAdmin = (req,res,next) => {
-    try{
-        if(req.user.role !== "admin"){
-           return res.status(401).json({
-            success:false,
-            message:"protected route for Admins only",
-        });
+exports.isAdmin = (req, res, next) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: "Protected route for admins only",
+      });
     }
-    }catch(error){
-        return res.status(500).json({
-            success:false,
-            message:"user role is not matching",
-        });
-    }
+    next();   // FIX
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "User role is not matching",
+    });
+  }
 };
-
-
-

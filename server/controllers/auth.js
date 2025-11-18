@@ -3,8 +3,7 @@ const jwt = require("jsonwebtoken")
 const jobSeeker = require("../models/jobSeeker");
 const company = require("../models/company");
 const admin = require("../models/admin");
-const jobSeeker = require("../models/jobSeeker");
-const jobSeeker = require("../models/jobSeeker");
+
 require("dotenv").config();
 
 // --------- --------  job Seeker SignUp -------- 
@@ -28,28 +27,29 @@ exports.signUpjobSeeker = async(req ,res) =>{
 
         const hashPassword = await bcrypt.hash(password, 10);
 
-        const jobSeeker = await jobSeeker.create({
+        const jobseeker = await jobSeeker.create({
             name,
             email,
             password:hashPassword,
             phone,
-            role:"jobSeeker",
+            role:"jobseeker",
         });
 
         return res.status(201).json({
             success:true,
             message:"job seeker registered succesfully",
-            jobSeeker,
+            jobseeker,
         });
 
 
     }
-    catch(error){
-        console.log("error");
-        res.status(500).json({
-            message:"signUp failed"
-        });
-    }
+    catch (error) {
+    console.log("SIGNUP ERROR →", error);
+    return res.status(500).json({
+        message: "signUp failed"
+    });
+}
+
 };
 
 
@@ -75,7 +75,7 @@ exports.signUpcompany = async (req,res) =>{
 
         const hashPassword = await bcrypt.hash(password,10)
 
-        const company = await company.create({
+        const Company = await company.create({
             companyName,
             email,
             password:hashPassword,
@@ -86,7 +86,7 @@ exports.signUpcompany = async (req,res) =>{
         return res.status(201).json({
             success:true,
             message:"company registered successfully",
-            company,
+            Company,
         });
 
 
@@ -123,7 +123,7 @@ exports.signUpadmin = async(req,res) =>{
 
     const hashPassword = await bcrypt.hash(password,10);
 
-    const admin = await admin.create({
+    const Admin = await admin.create({
         email,
         password:hashPassword,
         role:"admin"
@@ -131,7 +131,7 @@ exports.signUpadmin = async(req,res) =>{
     return res.status(201).json({
             success:true,
             message:"admine registered successfully",
-            admin,
+            Admin,
         });
     }
     catch(error){
@@ -152,9 +152,18 @@ exports.login = async(req,res) =>{
     try{
         const{email, password} =req.body;
 
-        let account = await jobSeeker.findOne({email}) || 
-                           await company.findOne({email}) ||
-                           await admin.findOne({email});
+        let account = await jobSeeker.findOne({ email });
+        let role = "jobSeeker";
+
+    if (!account) {
+      account = await company.findOne({ email });
+      role = "company";
+    }
+
+    if (!account) {
+      account = await admin.findOne({ email });
+      role = "admin";
+    }
         if(!account){
             return res.status(400).json({
                 message:"Account not exist",

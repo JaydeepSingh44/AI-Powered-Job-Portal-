@@ -25,7 +25,7 @@ const companySchema = new mongoose.Schema({
     },
 
     description:{
-        type:string,
+        type:String,
         require:true,
     },
 
@@ -35,7 +35,7 @@ const companySchema = new mongoose.Schema({
     },
     
     address:{
-        type:string,
+        type:String,
         
     },
     verified: { 
