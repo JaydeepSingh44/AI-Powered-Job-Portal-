@@ -4,13 +4,13 @@ const applicantsSchema = new mongoose.Schema({
     jobSeekerId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"jobSeeker",
-        require:true,
+        required:true,
     },
 
     jobId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"job",
-        require:true,
+        required:true,
     },
 
     resumeUrl:{
@@ -28,6 +28,6 @@ const applicantsSchema = new mongoose.Schema({
 
     },
 
-});
+},{timestamps:true});
 
 module.exports = mongoose.model("application",applicantsSchema);

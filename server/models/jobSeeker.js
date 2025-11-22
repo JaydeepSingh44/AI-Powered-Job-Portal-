@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const jonSeekerSchema = new mongoose.Schema({
     name:{
         type:String,
-        require:true,
+        required:true,
         trim: true
     },
     email:{
         type:String,
-        require:true,
+        required:true,
         unique: true,
         trim: true
     },
@@ -16,13 +16,13 @@ const jonSeekerSchema = new mongoose.Schema({
 
     password:{
         type:String,
-        require:true,
+        required:true,
     },
 
 
     phone:{
         type:String,
-        require:true,
+        required:true,
     },
 
 

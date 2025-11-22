@@ -3,21 +3,21 @@ const mongoose = require('mongoose');
 const companySchema = new mongoose.Schema({
     companyName:{
         type:String,
-        require:true,
+        required:true,
     },
     email:{
         type:String,
-        require:true,
+        required:true,
         unique: true
     },
     password:{
         type:String,
-        require:true,
+        required:true,
     },
 
     phone:{
         type:String,
-        require:true,
+        required:true,
     },
     
     logo:{
@@ -26,12 +26,12 @@ const companySchema = new mongoose.Schema({
 
     description:{
         type:String,
-        require:true,
+        required:true,
     },
 
     website:{
         type:String,
-        require:true,
+        required:true,
     },
     
     address:{

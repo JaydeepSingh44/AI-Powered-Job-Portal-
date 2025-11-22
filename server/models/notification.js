@@ -24,7 +24,7 @@ const notificationSchema = new mongoose.Schema({
     type:{
         type:String,
         enum:["application", "job" , "company", "system" , "subscription"],
-        require:true,
+        required:true,
     },
 
     read:{
@@ -37,3 +37,5 @@ const notificationSchema = new mongoose.Schema({
 
 
 },{timestamps:true});
+
+module.exports = mongoose.model("notification", notificationSchema);
