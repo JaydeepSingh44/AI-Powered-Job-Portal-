@@ -15,6 +15,7 @@ require("./config/database.js").connect();
 
 app.use("/auth/api",require("./routes/auth.js"));
 app.use("/jobSeeker/api",require("./routes/jobSeeker.js"));
+app.use("/company/api",require("./routes/company.js"));
 
 
 app.listen (port ,()=>{
