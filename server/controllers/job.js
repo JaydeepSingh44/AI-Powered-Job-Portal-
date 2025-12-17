@@ -1,5 +1,5 @@
 const Job = require("../models/job");
-const Company = require("../models/")
+
 
 
 exports.getAllJobs = async(req , res) =>{
@@ -25,7 +25,7 @@ exports.getJobById = async(req,res) =>{
         const{ jobId }= req.params;
 
         const job = await Job.findById(jobId).populate(
-            "compantId",
+            "companyId",
             "companyName description"
         );
 
@@ -79,34 +79,35 @@ exports.searchJob = async (req,res) => {
 };
 
 
-exports.filterJob = async (req,res) =>{
-    try{
-        const{location , jobType , experienceLevel , salary} = req.query;
+exports.filterJob = async (req, res) => {
+  try {
+    const { location, jobType, experienceLevel, salary } = req.query;
 
-        let filter = {};
+    let filter = {};
 
-        if(location) filter.location = location;
-        if(jobType) filter.jobType = jobType;
-        if(experienceLevel) filter.experienceLevel = experienceLevel;
-        if(salary) filter.salary =salary;
+    if (location) filter.location = location;
+    if (jobType) filter.jobType = jobType;
+    if (experienceLevel) filter.experienceLevel = experienceLevel;
+    if (salary) filter.salary = salary;
 
-        const jobs = (await Job.find(filter)).populate(
-            "companyId",
-            "companyName"
-        );
-        res.status(200).json({
-            success: true,
-            count: jobs.length,
-            jobs,
-        });
-    }catch (error) {
-        console.log("FILTER JOBS ERROR ", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
-    }
+    const jobs = await Job.find(filter)
+      .populate("companyId", "companyName");
+
+    res.status(200).json({
+      success: true,
+      count: jobs.length,
+      jobs,
+    });
+
+  } catch (error) {
+    console.log("FILTER JOBS ERROR ", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 };
+
 
 
 
