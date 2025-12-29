@@ -50,45 +50,62 @@ exports.getJobById = async(req,res) =>{
 };
 
 
-exports.searchJob = async (req,res) => {
-    try{
-        const{keyword} = req.query;
+exports.searchJob = async (req, res) => {
+  try {
+    const { keyword } = req.query;
 
-        const jobs = await Job.find({
-            $or:[
-                {title:{$regex:keyword, $options:"i"}},
-                {description:{$regex:keyword, $options:"i"}},
+    const query = {};
 
-            ],
-        }).populate("companyId","companyName");
-        
-        
-        res.status(200).json({
-            success: true,
-            count: jobs.length,
-            jobs,
-        });       
-
-    }catch (error) {
-        console.log("SEARCH JOBS ERROR →", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
+    if (keyword && typeof keyword === "string") {
+      query.$or = [
+        { title: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ];
     }
+
+    const jobs = await Job.find(query)
+      .populate("companyId", "companyName");
+
+    res.status(200).json({
+      success: true,
+      count: jobs.length,
+      jobs,
+    });
+
+  } catch (error) {
+    console.log("SEARCH JOBS ERROR →", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 };
+
 
 
 exports.filterJob = async (req, res) => {
   try {
-    const { location, jobType, experienceLevel, salary } = req.query;
+    const { location, jobType, experienceLevel, minSalary, maxSalary } = req.query;
 
-    let filter = {};
+    const filter = {};
 
-    if (location) filter.location = location;
-    if (jobType) filter.jobType = jobType;
-    if (experienceLevel) filter.experienceLevel = experienceLevel;
-    if (salary) filter.salary = salary;
+    if (location) {
+      filter.location = { $regex: location, $options: "i" };
+    }
+
+    if (jobType) {
+      filter.jobType = jobType;
+    }
+
+    if (experienceLevel) {
+      filter.experienceLevel = experienceLevel;
+    }
+
+    if (minSalary || maxSalary) {
+      filter.salary = {};
+      if (minSalary) filter.salary.$gte = Number(minSalary);
+      if (maxSalary) filter.salary.$lte = Number(maxSalary);
+    }
 
     const jobs = await Job.find(filter)
       .populate("companyId", "companyName");
@@ -100,13 +117,14 @@ exports.filterJob = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("FILTER JOBS ERROR ", error);
+    console.log("FILTER JOBS ERROR →", error);
     res.status(500).json({
       success: false,
       message: "Server error",
     });
   }
 };
+
 
 
 

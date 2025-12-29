@@ -148,12 +148,12 @@ exports.signUpadmin = async(req,res) =>{
 //----Login --------------
 //-----------------------------------------
 
-exports.login = async(req,res) =>{
-    try{
-        const{email, password} =req.body;
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        let account = await jobSeeker.findOne({ email });
-        let role = "jobSeeker";
+    let account = await jobSeeker.findOne({ email });
+    let role = "jobseeker";
 
     if (!account) {
       account = await company.findOne({ email });
@@ -164,59 +164,44 @@ exports.login = async(req,res) =>{
       account = await admin.findOne({ email });
       role = "admin";
     }
-        if(!account){
-            return res.status(400).json({
-                message:"Account not exist",
-            });
-        };
-        
-        const passwordMatch = await bcrypt.compare(password, account.password);
-        if(!passwordMatch){
-            return res.status(401).json({
-                message:"invalid password !! Enter again",
-            });
-        };
-        
 
-        const payload = {
-            email : account.email,
-            id : account._id,
-            role : account.role
-        }
-        let token = jwt.sign(payload,process.env.JWT_SECRET,{
-            expiresIn:"7d",
-
-        });
-
-        account = account.toObject();
-        account.token = token;
-        account.password = undefined;
-
-        const options = {
-            expires:new Date(Date.now() + 7*24*60*60*1000),
-            httpOnly:true,
-            sameSite:"lax",
-        };
-
-        res.cookie("token",token,options).status(200).json({
-            success:true,
-            message:"login successfully",
-            token,
-            role:account.role,
-            user:account,
-        });
-
-        
-
-    }catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: "Login failed",
-        });
+    if (!account) {
+      return res.status(400).json({ message: "Account not exist" });
     }
+
+    const passwordMatch = await bcrypt.compare(password, account.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    const payload = {
+      id: account._id,
+      email: account.email,
+      role,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    account = account.toObject();
+    account.role = role;
+    account.password = undefined;
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: false,
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    res.status(200).json({
+      success: true,
+      token,
+      user: account,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Login failed" });
+  }
 };
-
-
-
-

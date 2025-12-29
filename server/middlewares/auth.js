@@ -14,8 +14,8 @@ exports.auth = (req, res, next) => {
   }
 
   // Get token from cookies (optional)
-  else if (req.cookies && req.cookies.jwt) {
-    token = req.cookies.jwt;
+  else if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
     console.log("Token from cookies:", token);
   }
 
