@@ -1,6 +1,7 @@
 This project focuses purely on backend architecture and business logic. Frontend integration will be planned separately in Future.
 
 Key Feature of my Core backend project :
+
    ->RESTful API architecture following industry best practices
    -> JWT-based authentication and authorization
    -> Role-Based Access Control (RBAC) for Admin, Recruiter, and Job Seeker roles
@@ -18,4 +19,5 @@ Key Feature of my Core backend project :
 
 
    
+
 
