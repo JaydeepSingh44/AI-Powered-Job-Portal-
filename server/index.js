@@ -15,7 +15,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://ai-powered-job-portal-1-t5es.onrender.com",
     credentials: true,
   })
 );
