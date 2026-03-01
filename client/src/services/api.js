@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // FIX: Changed port from 5000 to 3000 to match your backend index.js
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://ai-powered-job-portal-ed0i.onrender.com';
 
 const api = axios.create({
   baseURL: API_URL,
