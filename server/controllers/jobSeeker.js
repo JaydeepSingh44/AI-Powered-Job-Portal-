@@ -17,10 +17,11 @@ exports.getProfile = async(req , res) =>{
             });
         }
 
-        res.status(200).json({
-            success:true,
-            profile,
-        });
+        res
+  .status(200)
+  .set("Cache-Control", "no-store")
+  .json(profile);
+
         
 
 

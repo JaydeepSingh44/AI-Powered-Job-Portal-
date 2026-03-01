@@ -40,8 +40,6 @@ app.use("/admin/api", require("./routes/admin.js"));
 
 
 
-
-
 app.listen (port ,()=>{
     console.log(`Server runs at port ${port}`);
 });
